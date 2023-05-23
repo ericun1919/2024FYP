@@ -43,9 +43,9 @@ const Landing = () => {
   const [theme, setTheme] = useState(themeOptions[1]);
   const { t, i18n } = useTranslation();
   const [submitExpanded, setSubmitExpanded] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams({pid: -1, user_id: -1, language:'zh'});
+  const [searchParams, setSearchParams] = useSearchParams({cid: -1, user_id: -1, language:'zh'});
   const user_id = searchParams.get('user_id');
-  const qid = searchParams.get('pid');
+  const cid = searchParams.get('cid');
   const lan = searchParams.get('language');
   const [PythonDefault, setPythonDefault] = useState('');
   const [testcase, setTestcase] = useState([]);
@@ -168,12 +168,33 @@ const Landing = () => {
       console.log("catch block...", error);
     });
   }
-
+  const getTestcase = () =>{
+    const options = {
+      method: "GET",
+      headers:{
+        'Authorization': 'Bearer patmoq8DTm4O7fld6.02124127bdc35e447d740d5379f6f72f64e050a85ea77ef02992f83bfdba950c' 
+      },
+      url: 'https://api.airtable.com/v0/app1DeeRQNeaYG5m9/test_case/' + `?filterByFormula=challenges_id=${cid}`,
+    };
+    axios
+    .request(options)
+    .then(function (response) {
+      console.log(response.data.records);
+      setTestcase(response.data.records);
+    })
+    .catch((err) => {
+      let error = err.response ? err.response.data : err;
+      // get error status
+      console.log("catch block...", error);
+    })
+  }
   useEffect(() => {
-    if (user_id > 0 && qid > 0){
-      getQuestion();
-      getSession();
-    }
+    getTestcase();
+    getQuestion();
+    // if (user_id > 0 && cid > 0){
+    //   getQuestion();
+    //   getSession();
+    // }
     i18n.changeLanguage(lan);
     // handleRemoveQueryStrings();
   },[]);
@@ -184,7 +205,7 @@ const Landing = () => {
       url: 'https://api.bricks.academy/api:session/problem_session',
       data: {
         "user_id": user_id,
-        "problem_id": qid
+        "problem_id": cid
       }
     };
     axios
@@ -202,19 +223,16 @@ const Landing = () => {
 
   function getQuestion(){
     const options = {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
+      method: "GET",
+      headers:{
+        'Authorization': 'Bearer patmoq8DTm4O7fld6.02124127bdc35e447d740d5379f6f72f64e050a85ea77ef02992f83bfdba950c' 
       },
-      url: 'https://api.bricks.academy/api:problem/problem',
-      data: {
-        "pid": qid
-      },
+      url: 'https://api.airtable.com/v0/app1DeeRQNeaYG5m9/challenges/' + `?filterByFormula=challenges_id=${cid}`,
     };
     axios
     .request(options)
     .then(function (response) {
-      setTestcase(response.data._testcase);
+      console.log(response);
     })
     .catch((err) => {
       let error = err.response ? err.response.data : err;
@@ -259,11 +277,11 @@ const Landing = () => {
     
     {testcase.map(t => {
       const newItem = {
-        language_id: language.id,
+        language_id: 71,
         // encode source code in base64
-        expected_output: t.output_base64,
+        expected_output: t.fields.output_code64,
         source_code: b64EncodeUnicode(code),
-        stdin: t.input_base64,
+        stdin: t.fields.input_code64? t.fields.input_code64: null,
       }
       form.push(newItem);
     }
@@ -423,12 +441,11 @@ const Landing = () => {
         }, 1000);
         return;
       } else {
-
+        console.log(response.data.submissions)
         setProcessing(false);
         setSubmitting(false);
-        console.log(response.data.submissions);
         setSubmitOutputDetails(response.data.submissions);
-        sendSubmit(response.data.submissions);
+        // sendSubmit(response.data.submissions);
         showSuccessToast(`Compiled Successfully!`);
         return;
       }
@@ -467,7 +484,7 @@ const Landing = () => {
         method: "POST",
         url: 'https://api.bricks.academy/api:problem/problem_submission',
         data: {
-          "pid": qid,
+          "pid": cid,
           "user_id": user_id,
           "code": code,
           "code_base64": b64EncodeUnicode(code),
@@ -516,7 +533,7 @@ const Landing = () => {
       url: 'https://api.bricks.academy/api:session/problem_session/c',
       data: {
         "user_id": user_id,
-        "problem_id": qid,
+        "problem_id": cid,
         "code": code
       }
     };
@@ -618,7 +635,7 @@ const Landing = () => {
                   <CustomInput
                     code = {code}
                     processing={processing}
-                    sendData={sendData}
+                    sendData={handleCompile}
                     customInput={customInput}
                     setCustomInput={setCustomInput}
                   />
@@ -632,7 +649,7 @@ const Landing = () => {
         <div className = "w-[100%] px-4 py-1 md:w-[40%] md:fixed md:top-20 md:right-10">
         {/* <CAccordion activeItemKey={1} onClick={}> */}
   
-        {(user_id > 0) && (qid > 0) && <CAccordion className={submitExpanded? "w-[100%]": "ml-auto w-32 transition-all duration-700"}>
+        {(user_id > 0) && (cid > 0) && <CAccordion className={submitExpanded? "w-[100%]": "ml-auto w-32 transition-all duration-700"}>
           <CAccordionItem itemKey={1}>
             <Submit 
             handleExpand={handleSubmitExpand}

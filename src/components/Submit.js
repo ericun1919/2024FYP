@@ -19,9 +19,9 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
 
     async function copyTextToClipboard() {
         if ('clipboard' in navigator) {
-          return await navigator.clipboard.writeText(b64DecodeUnicode(tc.input_base64));
+          return await navigator.clipboard.writeText(b64DecodeUnicode(tc.fields.input_code64));
         } else {
-          return document.execCommand('copy', true, b64DecodeUnicode(tc.input_base64));
+          return document.execCommand('copy', true, b64DecodeUnicode(tc.fields.input_code64));
         }
     }
 
@@ -40,7 +40,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     <div>
                         <Trans>Input</Trans>
                     </div>
-                    {tc.visible?<div>
+                    {tc.fields.visible?<div>
                         <button onClick={copyTextToClipboard}>
                             <img className ='h-5 inline-block mb-1' src={process.env.PUBLIC_URL  + `/copy.png`}></img>
                         </button>
@@ -48,19 +48,16 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
 
                 </div>
                 <pre className="px-2 py-2 w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-                    <Trans>{tc.visible? b64DecodeUnicode(tc.input_base64): 'Hidden'}</Trans>
+                    <Trans>{tc.fields.visible == false? 'Hidden' : tc.fields.input_code64? b64DecodeUnicode(tc.fields.input_code64) : ""}</Trans>
                 </pre>
                 <br></br>
                 <div className= "font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
                     <Trans>Output</Trans>
                 </div>
                 <pre className="px-2 py-2  w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-                    <Trans>{tc.visible? b64DecodeUnicode(tc.output_base64): 'Hidden'}</Trans>
+                    <Trans>{tc.fields.visible? b64DecodeUnicode(tc.fields.output_code64): 'Hidden'}</Trans>
                 </pre>
                 <br></br>
-                <pre className="w-full font-normal text-base">
-                    <Trans>{tc.visible? b64DecodeUnicode(tc.description_base64): 'Hidden'}</Trans>
-                </pre>
                 <div className= "font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
                     <Trans>Status</Trans>
                 </div>
@@ -100,7 +97,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     submitOutputDetails.length < 1?  "border-inherit" : submitOutputDetails[testcase.indexOf(t)].status.description === 'Accepted'? "border-lime-600": "border-rose-600",
                     )}
                 >
-                    {t.visible? <div><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>:<div className='mr-1'><img className = "h-4 inline-block mb-1"src={process.env.PUBLIC_URL  + `/testcase_hidden.png`}></img><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>}
+                    {t.fields.visible? <div><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>:<div className='mr-1'><img className = "h-4 inline-block mb-1"src={process.env.PUBLIC_URL  + `/testcase_hidden.png`}></img><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>}
                 </button>
                 );
                 })}
