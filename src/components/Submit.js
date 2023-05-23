@@ -48,7 +48,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
 
                 </div>
                 <pre className="px-2 py-2 w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-                    <Trans>{tc.fields.visible == false? 'Hidden' : tc.fields.input_code64? b64DecodeUnicode(tc.fields.input_code64) : ""}</Trans>
+                    <Trans>{b64DecodeUnicode(tc.fields.input_code64)}</Trans>
                 </pre>
                 <br></br>
                 <div className= "font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
