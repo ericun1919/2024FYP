@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation, Trans } from 'react-i18next';
+
 const OutputWindow = ({ compileOutputDetails }) => {
   function b64DecodeUnicode(str) {
     // Going backwards: from bytestream, to percent-encoding, to original string.
@@ -44,7 +44,7 @@ const OutputWindow = ({ compileOutputDetails }) => {
     <div  className="w-[70%]">
       <div style={{ height:"5vh"}} className="flex">
         <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-auto mt-auto">
-          <Trans>Output</Trans>
+          Output
         </h1>
       </div>
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { classnames } from "../utils/general";
-import { useTranslation, Trans } from 'react-i18next';
 
 const CustomInput = ({ customInput, setCustomInput, sendData, processing, code}) => {
   function b64DecodeUnicode(str) {
@@ -17,7 +16,7 @@ const CustomInput = ({ customInput, setCustomInput, sendData, processing, code})
     <>
       <div style={{ height:"5vh"}} className="flex justify-between ">
         <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-auto mt-auto">
-          <Trans>Custom Input</Trans>
+          Custom Input
         </h1>
         <button
             onClick={sendData}
@@ -28,7 +27,7 @@ const CustomInput = ({ customInput, setCustomInput, sendData, processing, code})
             )}
           >
               {<img className ='fill-current w-4 h-4 mr-2'src={process.env.PUBLIC_URL  + `/compile.png`}></img>}
-              <span><Trans>Run</Trans></span>
+              <span>Run</span>
             
         </button>
       </div>

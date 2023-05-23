@@ -6,7 +6,6 @@ import ThemeDropdown from "./ThemeDropdown";
 import FontSizeDropdown from "./FontSizeDropdown";
 import { languageOptions } from "../constants/languageOptions";
 import { themeOptions } from "../constants/themeOptions";
-import { useTranslation, Trans } from 'react-i18next';
 import { Alert } from '@coreui/react';
 import { CAccordionBody } from '@coreui/react'
 import { CAccordionHeader } from '@coreui/react'
@@ -31,22 +30,18 @@ import { redirect } from "react-router-dom";
 const RAPID_API_URL = "https://judge0-ce.p.rapidapi.com/submissions"
 const RAPID_API_HOST = "judge0-ce.p.rapidapi.com"
 const RAPID_API_KEY = "fbe7df1e99msh10f296f62348e88p18ba83jsn4f2f578fb950"
-const lngs = {
-  zh: { nativeName: 'Chinese' },
-  en: { nativeName: 'English' }
-};
+
 
 const Landing = () => {
   const [fontSize, setFontSize] = useState(24);
+  const [cInfo, setCInfo] = useState(null);
   const inputArea = document.querySelector('.inputarea');
   const [language, setLanguage] = useState(languageOptions[0]);
   const [theme, setTheme] = useState(themeOptions[1]);
-  const { t, i18n } = useTranslation();
   const [submitExpanded, setSubmitExpanded] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams({cid: -1, user_id: -1, language:'zh'});
+  const [searchParams, setSearchParams] = useSearchParams({cid: -1, user_id: -1});
   const user_id = searchParams.get('user_id');
   const cid = searchParams.get('cid');
-  const lan = searchParams.get('language');
   const [PythonDefault, setPythonDefault] = useState('');
   const [testcase, setTestcase] = useState([]);
   const [code, setCode] = useState('');
@@ -90,7 +85,7 @@ const Landing = () => {
 
   const keyPress = (e) =>{
     if (e.key === "Enter" && e.ctrlKey === true ){
-      sendData();
+      handleCompile();
       console.log(customInput)
     }
   }
@@ -195,7 +190,6 @@ const Landing = () => {
     //   getQuestion();
     //   getSession();
     // }
-    i18n.changeLanguage(lan);
     // handleRemoveQueryStrings();
   },[]);
   
@@ -232,7 +226,7 @@ const Landing = () => {
     axios
     .request(options)
     .then(function (response) {
-      console.log(response);
+      setCInfo(response.data.records[0].fields);
     })
     .catch((err) => {
       let error = err.response ? err.response.data : err;
@@ -246,7 +240,7 @@ const Landing = () => {
     if (enterPress && ctrlPress) {
       console.log("enterPress", enterPress);
       console.log("ctrlPress", ctrlPress);
-      sendData();
+      handleCompile();
     }
   }, [ctrlPress, enterPress]);
 
@@ -462,7 +456,7 @@ const Landing = () => {
   }, []);
 
   const showSuccessToast = (msg) => {
-    toast.success(t(msg || `Compiled Successfully!`), {
+    toast.success(msg || `Compiled Successfully!`, {
       position: "bottom-right",
       autoClose: 1000,
       hideProgressBar: false,
@@ -516,7 +510,7 @@ const Landing = () => {
     return true
   }
   const showErrorToast = (msg, timer) => {
-    toast.error(t(msg || `Something went wrong! Please try again.`), {
+    toast.error(msg || `Something went wrong! Please try again.`, {
       position: "bottom-right",
       autoClose: timer ? timer : 1000,
       hideProgressBar: false,
@@ -549,36 +543,7 @@ const Landing = () => {
     })
   }
 
-  const sendData = () => {
-    console.log(customInput)
-    setCompileOutputDetails("");
-    setProcessing(true);
-    const options = {
-      headers: {
-        "content-type": "application/json"
-      },
-      method: "POST",
-      url: 'https://api.bricks.academy/api:problem/execute',
-      data: {
-        "language_id": language.id,
-        // encode source code in base64
-        "code": b64EncodeUnicode(code),
-        "stdin": b64EncodeUnicode(customInput),
-      }
-    };
-    axios
-    .request(options)
-    .then(function (response) {
-      setProcessing(false);
-      setCompileOutputDetails(response.data.response.result);
-      showSuccessToast(`Compiled Successfully!`);
-    })
-    .catch((err) => {
-      console.log("err", err);
-      setProcessing(false);
-      showErrorToast();
-    })
-  };
+ 
 
   const handleSubmitExpand = () =>{
     if (submitExpanded == true){
@@ -601,65 +566,121 @@ const Landing = () => {
         draggable
         pauseOnHover
       />
-      <div className="flex pt-1 flex-col">
-        <div className = "block w-[100%] px-3 py-1">
-          <div className = "flex justify-between" style={{height:"6vh"}}>
-            <div className="mr-2 mb-2">
-              <LanguagesDropdown onSelectChange={onSelectChange} />
-            </div>
-            <div className="flex">
-              <div className="mr-2 mb-2">
-                <FontSizeDropdown onSelectChange={onFontSizeSelectChange} />
-              </div>
-              <div className="mb-2">
-                <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
-              </div>
+      <div className="flex">
+        <div className="flex flex-col w-[23%] border-r-2 bg-slate-50">
+          {cInfo? <div className="flex p-3 flex-col">
+
+            <div className="rounded-md bg-slate-100 p-2 mb-2">
+
+                <h1 className="text-xl font-bold">
+                  ProblemID: {cInfo.challenges_id}
+                </h1>
+                <h1 className='text-lg font-bold'>{cInfo.title}</h1>
+                
+            
             </div>
 
-          </div>
+            <div className="rounded-md bg-slate-100 p-2 mb-2">
+
+                <h1 className="text-xl font-bold">
+                  Difficulty: {cInfo.difficulty}
+                </h1>
+                
         
-          <div className="items-end codeWindow " style={{height:"54vh"}}>
-                <CodeEditorWindow
-                  fontSize = {fontSize}
-                  defaultValue = {PythonDefault}
-                  code={code}
-                  onChange={onChange}
-                  language={language?.value}
-                  theme={theme.value}
-                />
-          </div>
-
-          <div className='flex' style={{height:"34vh"}}>
-
-                <div className="relative w-[30%] mr-3">
-                  <CustomInput
-                    code = {code}
-                    processing={processing}
-                    sendData={handleCompile}
-                    customInput={customInput}
-                    setCustomInput={setCustomInput}
-                  />
-                </div>
-
-                <OutputWindow compileOutputDetails={compileOutputDetails} />
-
             </div>
+
+            <div className="rounded-md bg-slate-100 p-2 mb-2">
+
+                <h1 className="text-xl font-bold">
+                  Description: 
+                </h1>
+                <h1 className='text-sm font-bold'>{cInfo.description}</h1>
+            
+            </div>
+
+            <div className="rounded-md bg-slate-100 p-2">
+
+                <h1 className="text-xl font-bold">
+                  Example: 
+                </h1>
+                <pre>
+                  <h1 className='text-lg font-bold'>Input:</h1>
+                  <p className="pl-2 m-0">
+                    {cInfo.example_input}
+                  </p>
+                </pre>
+                <pre>
+                  <h1 className='text-lg font-bold m-0'>Output:</h1>
+                  <p className="pl-2 m-0">
+                    {cInfo.example_output}
+                  </p>
+                </pre>
+            
+            </div>
+
+          </div> : ""}
         </div>
-        
-        <div className = "w-[100%] px-4 py-1 md:w-[40%] md:fixed md:top-20 md:right-10">
-        {/* <CAccordion activeItemKey={1} onClick={}> */}
-  
-        {(user_id > 0) && (cid > 0) && <CAccordion className={submitExpanded? "w-[100%]": "ml-auto w-32 transition-all duration-700"}>
-          <CAccordionItem itemKey={1}>
-            <Submit 
-            handleExpand={handleSubmitExpand}
-            testcase={testcase} 
-            code = {code}
-            handleSubmit = {handleSubmit}
-            submitOutputDetails = {submitOutputDetails}
-            submitting = {submitting}/>
-            </CAccordionItem>
-        </CAccordion>}
+      
+        <div className="flex pt-1 flex-col w-[77%]">
+          <div className = "block w-[100%] px-3 py-1">
+            <div className = "flex justify-between" style={{height:"6vh"}}>
+              <div className="mr-2 mb-2">
+                <LanguagesDropdown onSelectChange={onSelectChange} />
+              </div>
+              <div className="flex">
+                <div className="mr-2 mb-2">
+                  <FontSizeDropdown onSelectChange={onFontSizeSelectChange} />
+                </div>
+                <div className="mb-2">
+                  <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                </div>
+              </div>
+
+            </div>
+          
+            <div className="items-end codeWindow " style={{height:"58vh"}}>
+                  <CodeEditorWindow
+                    fontSize = {fontSize}
+                    defaultValue = {PythonDefault}
+                    code={code}
+                    onChange={onChange}
+                    language={language?.value}
+                    theme={theme.value}
+                  />
+            </div>
+
+            <div className='flex' style={{height:"34vh"}}>
+
+                  <div className="relative w-[30%] mr-3">
+                    <CustomInput
+                      code = {code}
+                      processing={processing}
+                      sendData={handleCompile}
+                      customInput={customInput}
+                      setCustomInput={setCustomInput}
+                    />
+                  </div>
+
+                  <OutputWindow compileOutputDetails={compileOutputDetails} />
+
+              </div>
+          </div>
+          
+          <div className = "w-[100%] px-4 py-1 md:w-[40%] md:fixed md:top-20 md:right-10">
+          {/* <CAccordion activeItemKey={1} onClick={}> */}
+    
+          {(user_id > 0) && (cid > 0) && <CAccordion className={submitExpanded? "w-[100%]": "ml-auto w-40 transition-all duration-700"}>
+            <CAccordionItem itemKey={1}>
+              <Submit 
+              handleExpand={handleSubmitExpand}
+              testcase={testcase} 
+              code = {code}
+              handleSubmit = {handleSubmit}
+              submitOutputDetails = {submitOutputDetails}
+              submitting = {submitting}/>
+              </CAccordionItem>
+          </CAccordion>}
+          </div>
         </div>
       </div>
   </>

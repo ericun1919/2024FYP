@@ -5,9 +5,9 @@ import { CAccordionHeader } from '@coreui/react';
 import { CAccordionItem } from '@coreui/react';
 import { CAccordion } from '@coreui/react';
 import { classnames } from "../utils/general";
-import { useTranslation, Trans } from 'react-i18next';
+
 const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting, handleExpand}) => {
-    const { t, i18n } = useTranslation();
+
     const [tc, setTc] = useState(null);
     const switchTestcase = (i) =>{
         if (tc && tc === testcase[i]){
@@ -38,7 +38,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
 
                 <div className= "flex justify-between font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
                     <div>
-                        <Trans>Input</Trans>
+                        Input
                     </div>
                     {tc.fields.visible?<div>
                         <button onClick={copyTextToClipboard}>
@@ -48,28 +48,28 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
 
                 </div>
                 <pre className="px-2 py-2 w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-                    <Trans>{b64DecodeUnicode(tc.fields.input_code64)}</Trans>
+                    {b64DecodeUnicode(tc.fields.input_code64)}
                 </pre>
                 <br></br>
                 <div className= "font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
-                    <Trans>Output</Trans>
+                    Output
                 </div>
                 <pre className="px-2 py-2  w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-                    <Trans>{tc.fields.visible? b64DecodeUnicode(tc.fields.output_code64): 'Hidden'}</Trans>
+                    {tc.fields.visible? b64DecodeUnicode(tc.fields.output_code64): 'Hidden'}
                 </pre>
                 <br></br>
                 <div className= "font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
-                    <Trans>Status</Trans>
+                    Status
                 </div>
                 <div>
-                    <Trans>{submitOutputDetails.length > 0 ? submitOutputDetails[testcase.indexOf(tc)].status?.description : "-"}</Trans>
+                    {submitOutputDetails.length > 0 ? submitOutputDetails[testcase.indexOf(tc)].status?.description : "-"}
                 </div>
             </div>
         )
     }
     return (
         <CAccordionItem itemKey={3}>
-            <CAccordionHeader onClick={handleExpand}><span className="font-bold"><img className ='h-5 inline-block mr-1 mb-1'src={process.env.PUBLIC_URL  + `/submit.png`}></img><Trans>Submit</Trans></span></CAccordionHeader>
+            <CAccordionHeader onClick={handleExpand}><span className="font-bold"><img className ='h-5 inline-block mr-1 mb-1'src={process.env.PUBLIC_URL  + `/submit.png`}></img>Submit</span></CAccordionHeader>
                 <CAccordionBody>
                 <div className=" overflow-y-auto" style={{height:"35rem"}}>
                     
@@ -82,7 +82,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     !code ? "opacity-50" : ""
                     )}
                 >
-                    {submitting? <div className="items-center ml-1">{t('Processing')}<img className ='h-5 inline-block mb-1'src={process.env.PUBLIC_URL  + `/processing.gif`}></img></div> : t("Run")}
+                    {submitting? <div className="items-center ml-1">{'Processing'}<img className ='h-5 inline-block mb-1'src={process.env.PUBLIC_URL  + `/processing.gif`}></img></div> : "Run"}
                 </button>
                 <br></br>
                 <div>
@@ -97,7 +97,7 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     submitOutputDetails.length < 1?  "border-inherit" : submitOutputDetails[testcase.indexOf(t)].status.description === 'Accepted'? "border-lime-600": "border-rose-600",
                     )}
                 >
-                    {t.fields.visible? <div><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>:<div className='mr-1'><img className = "h-4 inline-block mb-1"src={process.env.PUBLIC_URL  + `/testcase_hidden.png`}></img><Trans>{'Testcase'}</Trans>{testcase.indexOf(t) + 1}</div>}
+                    {t.fields.visible? <div>{'Testcase'}{testcase.indexOf(t) + 1}</div>:<div className='mr-1'><img className = "h-4 inline-block mb-1"src={process.env.PUBLIC_URL  + `/testcase_hidden.png`}></img>{'Testcase'}{testcase.indexOf(t) + 1}</div>}
                 </button>
                 );
                 })}

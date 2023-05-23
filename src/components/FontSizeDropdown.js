@@ -2,13 +2,13 @@ import React from "react";
 import Select from "react-select";
 import { customStyles } from "../constants/customStyles";
 import { fontSizeOptions } from "../constants/fontSizeOptions";
-import { useTranslation, Trans } from 'react-i18next';
+
 
 const FontSizeDropdown = ({ onSelectChange }) => {
-    const { t, i18n } = useTranslation();
+
     function translationList(f){
         for (let i = 0; i < f.length; i++){
-            let temp = t(f[i].name)
+            let temp = f[i].name
             f[i].label = <div className="flex items-center"><img className="h-5 mr-1" src={process.env.PUBLIC_URL  + `/fontsize_${f[i].name}.png`}/> {temp}</div>
         } 
         return f
@@ -16,7 +16,7 @@ const FontSizeDropdown = ({ onSelectChange }) => {
     function translation(f){
 
 
-        let temp = t(f.name)
+        let temp = f.name
         f.label = <div className="flex items-center"><img className="h-5 mr-1" src={process.env.PUBLIC_URL  + `/fontsize_${f.name}.png`}/> {temp}</div>
 
         return f
