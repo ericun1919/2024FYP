@@ -40,11 +40,11 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     <div>
                         Input
                     </div>
-                    {tc.fields.visible?<div>
+                    <div>
                         <button onClick={copyTextToClipboard}>
                             <img className ='h-5 inline-block mb-1' src={process.env.PUBLIC_URL  + `/copy.png`}></img>
                         </button>
-                    </div>:""}
+                    </div>
 
                 </div>
                 <pre className="px-2 py-2 w-full h-24 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
