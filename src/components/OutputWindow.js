@@ -43,7 +43,7 @@ const OutputWindow = ({ compileOutputDetails }) => {
   return (
     <div  className="w-[70%]">
       <div style={{ height:"5vh"}} className="flex">
-        <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-auto mt-auto">
+        <h1 className="font-bold text-xl bg-clip-text  bg-gradient-to-r from-slate-900 to-slate-700 mb-auto mt-auto">
           Output
         </h1>
       </div>

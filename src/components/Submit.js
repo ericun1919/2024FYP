@@ -1,13 +1,32 @@
 import React from "react";
-import { useEffect, useState } from "react";
-import { CAccordionBody } from '@coreui/react';
-import { CAccordionHeader } from '@coreui/react';
-import { CAccordionItem } from '@coreui/react';
-import { CAccordion } from '@coreui/react';
+import { useEffect, useState, Fragment } from "react";
+import {
+    Accordion,
+    AccordionHeader,
+    AccordionBody
+  } from "@material-tailwind/react";
 import { classnames } from "../utils/general";
-
+function Icon({ id, open }) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    );
+  }
 const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting, handleExpand}) => {
-
+    const [open, setOpen] = useState(0);
+    const handleOpen = (value) => {
+        setOpen(open === value ? 0 : value);
+      };
     const [tc, setTc] = useState(null);
     const switchTestcase = (i) =>{
         if (tc && tc === testcase[i]){
@@ -68,9 +87,9 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
         )
     }
     return (
-        <CAccordionItem itemKey={3}>
-            <CAccordionHeader onClick={handleExpand}><span className="font-bold"><img className ='h-5 inline-block mr-1 mb-1'src={process.env.PUBLIC_URL  + `/submit.png`}></img>Submit</span></CAccordionHeader>
-                <CAccordionBody>
+        <Accordion open={open === 1} icon={<Icon id={1} open={open} />} className={"pl-3 pr-3 bg-gray-50 border-2 border-inherit rounded-md " + (open == 0? "w-40 ml-auto" : "w-[100%]")}>
+            <AccordionHeader onClick={() => handleOpen(1)}><span className="font-bold"><img className ='h-5 inline-block mr-1 mb-1'src={process.env.PUBLIC_URL  + `/submit.png`}></img>Submit</span></AccordionHeader>
+                <AccordionBody>
                 <div className=" overflow-y-auto" style={{height:"35rem"}}>
                     
                 <div className='flex flex-col '>
@@ -91,10 +110,10 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                     <button
                     onClick={() => switchTestcase(testcase.indexOf(t))}
                     className={classnames(
-                    "m-2 border-2 border-black z-10 text-black rounded-md px-1 py-1 w-[25%] cursor-pointer",
+                    "m-2 border-2 z-10 text-black rounded-md px-1 py-1 w-[25%] cursor-pointer",
                     !code ? "opacity-50" : "",
-                    testcase.indexOf(t) === testcase.indexOf(tc)? "bg-slate-200":"",
-                    submitOutputDetails.length < 1?  "border-inherit" : submitOutputDetails[testcase.indexOf(t)].status.description === 'Accepted'? "border-lime-600": "border-rose-600",
+                    testcase.indexOf(t) === testcase.indexOf(tc)? "bg-gray-400":"",
+                    submitOutputDetails.length < 1?  "border-black" : submitOutputDetails[testcase.indexOf(t)].status.description === 'Accepted'? "border-lime-800": "border-red-300",
                     )}
                 >
                     {t.fields.visible? <div>{'Testcase'}{testcase.indexOf(t) + 1}</div>:<div className='mr-1'><img className = "h-4 inline-block mb-1"src={process.env.PUBLIC_URL  + `/testcase_hidden.png`}></img>{'Testcase'}{testcase.indexOf(t) + 1}</div>}
@@ -105,9 +124,9 @@ const Submit = ({ testcase ,code, handleSubmit, submitOutputDetails, submitting,
                 </div>
                 {(submitOutputDetails && tc) ? <>{getTestcase()}</> : null}
                 </div>
-            </CAccordionBody>
-        </CAccordionItem>
-
+            </AccordionBody>
+        </Accordion>
+            
   );
 };
 

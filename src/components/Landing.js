@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import CodeEditorWindow from "./CodeEditorWindow";
 import axios from "axios";
 import LanguagesDropdown from "./LanguagesDropdown";
@@ -6,12 +6,6 @@ import ThemeDropdown from "./ThemeDropdown";
 import FontSizeDropdown from "./FontSizeDropdown";
 import { languageOptions } from "../constants/languageOptions";
 import { themeOptions } from "../constants/themeOptions";
-import { Alert } from '@coreui/react';
-import { CAccordionBody } from '@coreui/react'
-import { CAccordionHeader } from '@coreui/react'
-import { CAccordionItem } from '@coreui/react'
-import { CAccordion } from '@coreui/react'
-import '@coreui/coreui/dist/css/coreui.min.css'
 import { classnames } from "../utils/general";
 import ReactDOM from 'react-dom';
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +15,11 @@ import useKeyPress from "../hooks/useKeyPress";
 import OutputWindow from "./OutputWindow";
 import CustomInput from "./CustomInput";
 import OutputDetails from "./OutputDetails";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionBody
+} from "@material-tailwind/react";
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Submit from "./Submit";
@@ -33,6 +32,7 @@ const RAPID_API_KEY = "fbe7df1e99msh10f296f62348e88p18ba83jsn4f2f578fb950"
 
 
 const Landing = () => {
+  
   const [fontSize, setFontSize] = useState(24);
   const [cInfo, setCInfo] = useState(null);
   const inputArea = document.querySelector('.inputarea');
@@ -53,6 +53,8 @@ const Landing = () => {
   const [submitting, setSubmitting] = useState(null);
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
+
+
 
   const onSelectChange = (sl) => {
     setLanguage(sl);
@@ -244,11 +246,6 @@ const Landing = () => {
     }
   }, [ctrlPress, enterPress]);
 
-  useEffect(() =>{
-    if (code){
-      saveCode();
-    }
-  },[code]);
 
   const onChange = (action, data) => {
     switch (action) {
@@ -666,20 +663,21 @@ const Landing = () => {
               </div>
           </div>
           
-          <div className = "w-[100%] px-4 py-1 md:w-[40%] md:fixed md:top-20 md:right-10">
-          {/* <CAccordion activeItemKey={1} onClick={}> */}
+          <div className = "w-[100%] px-4 py-1 md:w-[40%] md:fixed md:top-24 md:right-10">
+
     
-          {(user_id > 0) && (cid > 0) && <CAccordion className={submitExpanded? "w-[100%]": "ml-auto w-40 transition-all duration-700"}>
-            <CAccordionItem itemKey={1}>
+          {(user_id > 0) && (cid > 0) &&
+            <Fragment>
               <Submit 
               handleExpand={handleSubmitExpand}
               testcase={testcase} 
               code = {code}
               handleSubmit = {handleSubmit}
               submitOutputDetails = {submitOutputDetails}
-              submitting = {submitting}/>
-              </CAccordionItem>
-          </CAccordion>}
+              submitting = {submitting}
+          />
+          </Fragment>
+          }
           </div>
         </div>
       </div>
