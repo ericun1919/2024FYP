@@ -189,8 +189,8 @@ const Challenges = () => {
       <div className="flex justify-start items-center flex-col h-screen">
       <div className="relative w-full">
         <video 
-          src={process.env.PUBLIC_URL+"code.mov"}
-          type="video/mov"
+          src={process.env.PUBLIC_URL+"code.mp4"}
+          type="video/mp4"
           loop
           controls={false}
           muted
